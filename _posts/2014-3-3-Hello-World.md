@@ -1,10 +1,5 @@
 ---
 layout: post
-title: You're up and running!
-published: true
----
----
-layout: post
 title: Vulnerable VMs: Kioptrix Pt. 1
 published: true
 ---
