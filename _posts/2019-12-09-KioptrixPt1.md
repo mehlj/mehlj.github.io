@@ -4,6 +4,8 @@ title: Vulnerable VMs: Kioptrix Pt. 1
 published: true
 ---
 
+## Kioptrix Pt. 1
+
 The Kioptrix series of vulnerable VMs closely resemble the material presented in the PWK course, and the OCSP exam. Kioptrix Level 1 starts out relatively easy, so let’s get started:
 
 Once we have the VM loaded in bridged adapter mode (directly connected to physical network), let’s quickly scan our subnet for the machine:
