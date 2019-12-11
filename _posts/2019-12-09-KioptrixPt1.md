@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Vulnerable VMs: Kioptrix Pt. 1
+title: Vulnerable VMs - Kioptrix Pt. 1
 published: true
 ---
 
