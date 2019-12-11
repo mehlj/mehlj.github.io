@@ -2,6 +2,7 @@
 layout: post
 title: Vulnerable VMs - Kioptrix Pt. 1
 published: true
+tags: [exploitation]
 ---
 
 The Kioptrix series of vulnerable VMs closely resemble the material presented in the PWK course, and the OCSP exam. Kioptrix Level 1 starts out relatively easy, so let’s get started:
