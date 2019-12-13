@@ -16,6 +16,7 @@ layout: default
   <div class="related">
     <h3>Related Posts</h3>
     {% assign firstCategory = page.categories | first %}
+    {{firstCategory}}
     {% assign relatedCount = 0 %}
     {% for related in site.categories[firstCategory] %}
         {% unless page.permalink == related.permalink %}
