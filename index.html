@@ -4,7 +4,7 @@ layout: default
 
 <h1>Categories</h1>
 {% for category in site.categories %}
-    <li><a href="{{category.url}}"><strong>{{category|first}}</strong></a></li>
+    <li><a href="{{category.permalink}}"><strong>{{category|first}}</strong></a></li>
 {% endfor %}
 
 <div class="posts">
