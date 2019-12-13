@@ -3,9 +3,11 @@ layout: default
 ---
 
 <h1>Categories</h1>
-{% for category in site.categories %}
-    <li><a href="{{category.permalink}}"><strong>{{category|first}}</strong></a></li>
-{% endfor %}
+    <li>
+        <a href="/category/exploitation"><strong>Exploitation</strong></a>
+        <a href="/category/devops"><strong>DevOps</strong></a>
+        <a href="/category/python}}"><strong>Python</strong></a>
+    </li>
 
 <div class="posts">
   {% for post in site.posts %}
