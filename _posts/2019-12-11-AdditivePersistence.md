@@ -27,4 +27,4 @@ This Python program, from a high level, does a few things:
 * Performs the mathematics above by calculating the sum of digits, determining if there are more than one digits, and looping if so 
 * Returns the additive persistence of the user-provided integer
 
-Post code here
+{% gist 53c87ef8bba9dd0c352dbfdd5f2596f5 %}

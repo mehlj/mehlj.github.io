@@ -19,4 +19,4 @@ This Python program:
 * Leverages libraries and custom logic to convert the time to a verbal statement in text (i.e., "It's one thirty am")
 * Leverages text-to-speech libraries to give the alarm a voice, playing via the system MP3 codecs
 
-Post code here
+{% gist cb8743c66c39ec25b3b9f7dc5aacf0db %}
