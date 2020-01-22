@@ -15,8 +15,7 @@ However, to exactly replicate these steps, here are the specifications:
 - CentOS 8
 - `docker-ce-3:19.03.5-3.el7.x86_64` 
 
-These steps will largely be adapted from the official CentOS/Docker documentation:
-https://docs.docker.com/install/linux/docker-ce/centos/
+These steps will largely be adapted from the [official CentOS/Docker documentation](https://docs.docker.com/install/linux/docker-ce/centos/).
 
 ## Prerequisites
 Begin by installing some utilities needed to setup our `docker` `yum` repository, and
