@@ -28,3 +28,7 @@ Even better, you could simply use the official `apache` image.
 ### EXPOSE
 ### COPY
 ### VOLUME
+
+## Building
+
+## Running
