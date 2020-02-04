@@ -25,6 +25,8 @@ FROM alpine
 ```
 The `FROM` instruction defines a base image to create this new image from. 
 
+In this instance, Docker is instructed to build from the official `alpine` base image. `alpine` is a lightweight Linux distribution (4-5 MB) that is commonly used in Docker container due to its speed and security.
+
 Docker images can be layered upon different images. This feature is useful for eliminating double-work in many situations. For example, if you needed a web server, you could use the official `debian` image available on Docker Hub. You could then add an install directive for the `apache` package somewhere later in your `Dockerfile`. In this scenario, you have saved a lot of time, as creating an operating system Dockerfile from scratch is non-trivial. 
 
 Even better, you could simply use the official `apache` image.
