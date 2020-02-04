@@ -11,6 +11,7 @@ unique Docker container. It is a simple text file that is easily interpreted by 
 A `Dockerfile` is then _built_ into a Docker _image_ using `docker build`. A Docker image is then _run_, and a running instance of a Docker image is referred to as a Docker _container_. You can have many Docker images stored locally, from the Internet, or in private repositories. But they all were once built from a `Dockerfile`. 
 
 ![](/images/dockerfile_diag.png)
+
 Think of the `Dockerfile` as instructions for an engineer or construction worker. The engineer reads the instructions, follows them step by step, and produces a final product in a package, ready to be used at the discretion of the customer. This final product is the Docker image.
 
 ## Example
