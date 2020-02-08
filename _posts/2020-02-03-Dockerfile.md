@@ -56,6 +56,10 @@ Docker images can be layered upon different images. This feature is useful for e
 Even better, you could simply use the official `apache` image.
 
 ### RUN
+```
+RUN apk update && \
+    apk add vim
+```
 The `RUN` instruction performs a task, run by the container shell, in the background. This is the instruction
 you should use if you want tasks to be performed at the OS level, but want output to be obstructed from users.
 
