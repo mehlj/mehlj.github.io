@@ -179,7 +179,7 @@ my_alpine_image     latest              a5389d833441        7 minutes ago       
 ## Running
 A Docker container is a running instance of a Docker image. To run an image, we can use `docker run`:
 ```
-[mehlj@docker dockerfile]$ docker run -it my_alpine_image /bin/sh                                                                                                                                                                                                                        
+[mehlj@docker dockerfile]$ docker run -it my_alpine_image /bin/sh   
 ```
 The flags `-it` and positional argument `/bin/sh` are a common combination that allows you to enter an interactive
 shell with your container. We will be doing this for educational purposes. 
