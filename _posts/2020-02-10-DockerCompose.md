@@ -1,4 +1,4 @@
-"---
+---
 layout: post
 title: Docker Compose
 published: true
