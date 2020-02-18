@@ -144,7 +144,7 @@ Change the permissions:
 ```
 [mehlj@docker docker-elk]$ sudo chmod +x /usr/local/bin/docker-compose
 ```
-Add it to our $PATH:
+Add it to our `$PATH`:
 ```
 [mehlj@docker docker-elk]$ sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 ```
