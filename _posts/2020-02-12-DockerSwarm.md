@@ -11,5 +11,6 @@ But what if you have tens of containers that you have to manage? What if you had
 
 That is where [container orchestration](https://www.redhat.com/en/topics/containers/what-is-container-orchestration) tools come in. Docker Swarm is the orchestrator native to the Docker toolset. 
 
-## Header 1
-## Header 2
+## Use Case
+## Example
+## Running
