@@ -22,4 +22,15 @@ Docker Swarm and Kubernetes are both orchestrators and provide generally the sam
 Docker Swarm is a good idea if you have a relatively small cluster of containers and hosts, and do not need the rich features that Kubernetes provides.
 
 ## Example
-## Running
+### Service
+### Stack
+
+## Swarm Initialization
+
+## Service deployment
+
+## Stack deployment
+
+## Scaling
+### Scaling up
+### Scaling down
