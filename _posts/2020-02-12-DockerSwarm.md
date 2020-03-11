@@ -48,7 +48,7 @@ Before we deploy our example service, we need to create our swarm cluster. In th
 CentOS 8 servers. 
 
 On one of the servers, we need to initialize the swarm:
-```shell script
+```
 [mehlj@docker ~]$ sudo docker swarm init
 Swarm initialized: current node (y56cl9ypgxbxf9inqlyb1tsh3) is now a manager.
 
@@ -62,7 +62,7 @@ To add a manager to this swarm, run 'docker swarm join-token manager' and follow
 As it stands, we have a single node cluster, with this server acting as a `manager`. Managers handle the scheduling
 and management of other `workers` in the cluster. Workers actually handle running the containers. By default, managers
 can act as workers simultaneously. 
-```shell script
+```
 [mehlj@docker ~]$ sudo docker node ls
 ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS      ENGINE VERSION
 y56cl9ypgxbxf9inqlyb1tsh3 *   docker              Ready               Active              Leader              18.09.1
@@ -71,13 +71,13 @@ y56cl9ypgxbxf9inqlyb1tsh3 *   docker              Ready               Active    
 
 We will join our other server as a `worker` to this swarm. The output of the `init` provided us with a command line
 to run for this purpose, so let's run it on the other server:
-```shell script
+```
 [mehlj@dockerworker ~]$ sudo docker swarm join --token SWMTKN-1-07x0dsyasrut2mxgxnyoyzk0qly552mv2cmge9i80k5llijeo5-cdgdiwd08gwqd7ffvfzca7b65 192.168.1.71:2377
 This node joined a swarm as a worker.
 ```
 
 Now, we can confirm that we have two nodes in our cluster:
-```shell script
+```
 [mehlj@docker ~]$ sudo docker node ls
 ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS      ENGINE VERSION
 y56cl9ypgxbxf9inqlyb1tsh3 *   docker              Ready               Active              Leader              18.09.1
@@ -86,21 +86,21 @@ nsq40rxf0jvrwrmj70k3ivh5z     dockerworker        Ready               Active    
 
 ## Deployment
 Deploying our service is simple using `docker stack deploy`:
-```shell script
+```
 [mehlj@docker ~]$ sudo docker stack deploy -c docker-stack.yml web
 Creating network web_default
 Creating service web_web
 ```
 
 We can confirm the service was deployed using `docker service ls`:
-```shell script
+```
 [mehlj@docker ~]$ sudo docker service ls
 ID                  NAME                MODE                REPLICAS            IMAGE               PORTS
 2k1kkf96purp        web_web             replicated          4/4                 nginx:latest        *:8080->80/tcp
 ```
 
 According to that, all four replicas are running. We can confirm this by diving a little deeper with `docker service ps`:
-```shell script
+```
 [mehlj@docker ~]$ sudo docker service ps web_web
 ID                  NAME                IMAGE               NODE                DESIRED STATE       CURRENT STATE           ERROR               PORTS
 s8b5y1plt2kd        web_web.1           nginx:latest        docker              Running             Running 6 seconds ago                       
@@ -112,7 +112,7 @@ q834tm690c0f        web_web.4           nginx:latest        dockerworker        
 This tells us that Docker has split up our replicas evenly across our two nodes - `docker` and `dockerworker`. 
 
 Now, we test our service by sending a `GET` request to 192.168.1.71:8080 or 192.168.1.70:8080:
-```shell script
+```
 [mehlj@workstation ~]$ curl http://192.168.1.70:8080
 <!DOCTYPE html>
 <html>
@@ -148,7 +148,7 @@ we can scale our application down if the replicas are unnecessary/wasting resour
 
 ### Scaling up
 We started with four replicas, so we can scale that up to five:
-```shell script
+```
 [mehlj@docker ~]$ sudo docker service scale web_web=5
 web_web scaled to 5
 overall progress: 5 out of 5 tasks 
@@ -160,7 +160,7 @@ overall progress: 5 out of 5 tasks
 verify: Service converged 
 [mehlj@docker ~]$ 
 ```
-```shell script
+```
 [mehlj@docker ~]$ sudo docker service ps web_web 
 ID                  NAME                IMAGE               NODE                DESIRED STATE       CURRENT STATE            ERROR               PORTS
 s8b5y1plt2kd        web_web.1           nginx:latest        docker              Running             Running 22 minutes ago                       
@@ -172,7 +172,7 @@ yd5ybceu83do        web_web.5           nginx:latest        dockerworker        
 
 ### Scaling down
 Similarly, we can scale it down back to four:
-```shell script
+```
 [mehlj@docker ~]$ sudo docker service scale web_web=4
 web_web scaled to 4
 overall progress: 4 out of 4 tasks 
@@ -182,7 +182,7 @@ overall progress: 4 out of 4 tasks
 4/4: running   [==================================================>] 
 verify: Service converged 
 ```
-```shell script
+```
 [mehlj@docker ~]$ sudo docker service ps web_web 
 ID                  NAME                IMAGE               NODE                DESIRED STATE       CURRENT STATE            ERROR               PORTS
 s8b5y1plt2kd        web_web.1           nginx:latest        docker              Running             Running 23 minutes ago                       
@@ -197,12 +197,12 @@ stopping the Docker service. After that, we can see if our application stays onl
 the replicas to itself seamlessly.
 
 First, we can start by killing the containers on the worker:
-```shell script
+```
 [mehlj@dockerworker ~]$ sudo service docker stop
 Redirecting to /bin/systemctl stop docker.service
 ```
 Now, on the manager, we can see that the worker shows `offline`:
-```shell script
+```
 [mehlj@docker ~]$ sudo docker node ls
 ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS      ENGINE VERSION
 y56cl9ypgxbxf9inqlyb1tsh3 *   docker              Ready               Active              Leader              18.09.1
@@ -210,7 +210,7 @@ nsq40rxf0jvrwrmj70k3ivh5z     dockerworker        Down                Active    
 ```
 
 We can also see that the `dockerworker` containers have `shutdown`, but are reinstated on the manager:
-```shell script
+```
 [mehlj@docker ~]$ sudo docker service ps web_web 
 ID                  NAME                IMAGE               NODE                DESIRED STATE       CURRENT STATE            ERROR               PORTS
 s8b5y1plt2kd        web_web.1           nginx:latest        docker              Running             Running 35 minutes ago                       
@@ -222,7 +222,7 @@ q834tm690c0f         \_ web_web.4       nginx:latest        dockerworker        
 ```
 
 We can also see that our application is still working correctly, despite the turmoil:
-```shell script
+```
 [mehlj@docker ~]$ curl http://192.168.1.71:8080
 <!DOCTYPE html>
 <html>
