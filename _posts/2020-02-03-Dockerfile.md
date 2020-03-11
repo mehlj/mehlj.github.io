@@ -19,7 +19,7 @@ follows them step by step, and produces a final product in a package, ready to b
 customer. This final product is the Docker image.
 
 ## Example
-```
+```Dockerfile
 FROM alpine:latest
 
 # Update and install vim
@@ -42,7 +42,7 @@ EXPOSE 80
 ```
 
 ### FROM
-```
+```Dockerfile
 FROM alpine:latest
 ```
 The `FROM` instruction defines a base image and version to create this new image from. 
@@ -56,7 +56,7 @@ Docker images can be layered upon different images. This feature is useful for e
 Even better, you could simply use the official `apache` image.
 
 ### RUN
-```
+```Dockerfile
 RUN apk update && \
     apk add vim
 ```
@@ -67,7 +67,7 @@ In this instance, Docker is instructed to update `alpine` using `apk`, install t
 create a new system user named `test_user`. 
 
 ### COPY
-```
+```Dockerfile
 COPY testfile testfile
 ```
 The `COPY` instruction can be difficult to read, but is simple in actuality. It copies a file from the `source` 
@@ -82,7 +82,7 @@ In this scenario, a simple text file was generated from the Docker host:
 The file `testfile` is copied from the host operating system to a file with the same name on the Docker container.
 
 ### VOLUME
-```
+```Dockerfile
 RUN mkdir -p /data/hostvolume
 RUN echo "Persistent data!" > /data/hostvolume/data_from_container
 VOLUME /data/hostvolume
@@ -99,7 +99,7 @@ and then shared to the host operating system. The file `data_from_container` wil
 is inevitably destroyed. 
 
 ### EXPOSE
-```
+```Dockerfile
 EXPOSE 80
 ```
 The `EXPOSE` instruction defines the network ports that the Docker container should listen on when run. By default, no
