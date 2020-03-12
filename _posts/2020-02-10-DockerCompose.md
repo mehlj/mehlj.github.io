@@ -37,7 +37,7 @@ A FOSS project known as [`docker-elk`](https://github.com/deviantony/docker-elk)
 `Dockerfile` and packaging it all up. It then leverages Docker Compose to create all ELK stack components at once. 
 
 This is the `docker-compose.yml`:
-```
+```yaml
 version: '3.2'
 
 services:
@@ -158,7 +158,7 @@ Now, we can start our ELK stack using the one-liner `docker-compose up` (`-d` fo
 [mehlj@docker docker-elk]$ docker-compose up -d
 ```
 Visit `http://localhost:9200` for raw ElasticSearch data:
-```
+```json
 {
   "name" : "d00c8cf2b493",
   "cluster_name" : "docker-cluster",
