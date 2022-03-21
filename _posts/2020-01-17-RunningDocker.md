@@ -2,7 +2,7 @@
 layout: post
 title: Docker Quick Start
 published: true
-category: devops
+category: infrastructure
 ---
 
 As explained in [another post](https://mehlj.github.io/Docker/), Docker is software designed to 'containerize' applications. While it can be complex to implement

@@ -2,7 +2,7 @@
 layout: post
 title: Python Challenge - Additive Persistence
 published: true
-category: python
+category: development
 ---
 
 ## Additive Persistence

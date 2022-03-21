@@ -5,8 +5,8 @@ permalink: /about/
 published: true
 ---
 
-I am a Linux sysadmin with an interest in DevOps, Python, and Web Application Security.
+I am a System Administrator with an interest in infrastructure automation, Python, Go, and web application security.
 
 ### Contact me
 
-[mehlsec@protonmail.com](mailto:mehlsec@protonmail.com)
+[justenmehl12@gmail.com](mailto:justenmehl12@gmail.com)

@@ -2,7 +2,7 @@
 layout: post
 title: Python Challenge - Talking Alarm
 published: true
-category: python
+category: development
 ---
 
 ## Implementation

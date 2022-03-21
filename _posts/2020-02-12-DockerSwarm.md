@@ -2,7 +2,7 @@
 layout: post
 title: Docker Swarm
 published: true
-category: devops
+category: infrastructure
 ---
 
 Docker containers are simple to manage when you have one container or

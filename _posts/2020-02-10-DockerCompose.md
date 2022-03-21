@@ -2,7 +2,7 @@
 layout: post
 title: Docker Compose
 published: true
-category: devops
+category: infrastructure
 ---
 
 Docker is software designed to package an application into a lightweight, portable, and fast self-contained environment. 

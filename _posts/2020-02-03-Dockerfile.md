@@ -2,7 +2,7 @@
 layout: post
 title: Anatomy of a Dockerfile
 published: true
-category: devops
+category: infrastructure
 ---
 
 As explained in [another post](https://mehlj.github.io/Docker/), a `Dockerfile` contains instructions on how to build 
