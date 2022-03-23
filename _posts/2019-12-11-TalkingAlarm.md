@@ -5,7 +5,7 @@ published: true
 category: development
 ---
 
-## Implementation
+# Implementation
 This program's purpose is to convert a textual 24-hour time format into a verbal statement of time, by both text and voice.
 
 For example:

@@ -14,7 +14,7 @@ But what if you have tens of containers that you have to manage? What if you had
 That is where [container orchestration](https://www.redhat.com/en/topics/containers/what-is-container-orchestration) 
 tools come in. Docker Swarm is the orchestrator native to the Docker toolset. 
 
-## Use Case
+# Use Case
 You should consider using an orchestrator anytime:
 * You run many containers at a time
 * You intend to run many containers across several different Docker hosts
@@ -27,7 +27,7 @@ also considered to be more complex and difficult to manage.
 Docker Swarm is a good idea if you have a relatively small cluster of containers and hosts, and do not need the rich
 features that Kubernetes provides.
 
-## Example
+# Example
 Docker services can be deployed on swarms using standard `docker-compose.yml` format. This is a simple example of an 
 out-of-the-box `nginx` web server replicated four times across all our swarm hosts.
 ```yaml
@@ -43,7 +43,7 @@ services:
       replicas: 4
 ```
 
-## Swarm Initialization
+# Swarm Initialization
 Before we deploy our example service, we need to create our swarm cluster. In this example, I will use two similar
 CentOS 8 servers. 
 
@@ -84,7 +84,7 @@ y56cl9ypgxbxf9inqlyb1tsh3 *   docker              Ready               Active    
 nsq40rxf0jvrwrmj70k3ivh5z     dockerworker        Ready               Active                                  18.09.1
 ```
 
-## Deployment
+# Deployment
 Deploying our service is simple using `docker stack deploy`:
 ```
 [mehlj@docker ~]$ sudo docker stack deploy -c docker-stack.yml web
@@ -141,12 +141,12 @@ Commercial support is available at
 </html>
 ```
 
-## Scaling
+# Scaling
 One major benefit of using an orchestrator is scaling. If our workload is abnormally high, or we simply want more
 redundancy for our service, we can nearly-instantly scale our application using a simple command line. Similarly,
 we can scale our application down if the replicas are unnecessary/wasting resources. All with no downtime to the app.
 
-### Scaling up
+## Scaling up
 We started with four replicas, so we can scale that up to five:
 ```
 [mehlj@docker ~]$ sudo docker service scale web_web=5
@@ -170,7 +170,7 @@ q834tm690c0f        web_web.4           nginx:latest        dockerworker        
 yd5ybceu83do        web_web.5           nginx:latest        dockerworker        Running             Running 48 seconds ago                       
 ```
 
-### Scaling down
+## Scaling down
 Similarly, we can scale it down back to four:
 ```
 [mehlj@docker ~]$ sudo docker service scale web_web=4
@@ -191,7 +191,7 @@ jncx6toiw4wv        web_web.3           nginx:latest        docker              
 q834tm690c0f        web_web.4           nginx:latest        dockerworker        Running             Running 23 minutes ago                       
 ```
 
-## Redundancy
+# Redundancy
 Just to validate the added redundancy we gain by using swarm, we can simulate our Docker worker going down by simply
 stopping the Docker service. After that, we can see if our application stays online. The swarm manager should offload
 the replicas to itself seamlessly.

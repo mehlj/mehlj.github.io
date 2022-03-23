@@ -5,7 +5,7 @@ published: true
 category: development
 ---
 
-## Additive Persistence
+# Additive Persistence
 
 A number's additive persistence is the number of additions required to obtain a single digit from a number ``n``. That last digit obtained is called the digital root.
 
@@ -19,7 +19,7 @@ We went through ``2`` rounds of addition, so the additive persistence is ``2``. 
 
 Weisstein, Eric W. "Additive Persistence." From MathWorld--A Wolfram Web Resource. http://mathworld.wolfram.com/AdditivePersistence.html
 
-## Implementation
+# Implementation
 
 This Python program, from a high level, does a few things:
 * Accepts user input in the form of a standard integer

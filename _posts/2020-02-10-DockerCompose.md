@@ -16,7 +16,7 @@ Each Docker container has a unique `Dockerfile`, and a single Docker Compose fil
 images to use and their dependency upon each other. The application's containers can then be managed using the 
 `docker-compose` command line interface.
 
-## Use Case
+# Use Case
 A best practice is to have a _single process_ per Docker container - a process that will kill the container when it dies, and 
 vice versa. This is to promote [speed, security, and portability of containers](
 https://devops.stackexchange.com/questions/447/why-it-is-recommended-to-run-only-one-process-in-a-container).
@@ -26,7 +26,7 @@ store non-volatile data. It would be inefficient to run both, say, Apache and My
 be split into two containers. But, they still need to communicate with eachother and be managed at the same time. That 
 is where `docker-compose` comes in. 
 
-## Example
+# Example
 [Solution Stack](https://en.wikipedia.org/wiki/Solution_stack) software is commonly used today, and one example is the
 [ELK stack](https://www.elastic.co/what-is/elk-stack). 
 
@@ -116,7 +116,7 @@ volumes:
   elasticsearch:
 ```
 
-## Running
+# Running
 We can begin by cloning the Github project:
 ```
 [mehlj@docker compose]$ git clone https://github.com/deviantony/docker-elk.git

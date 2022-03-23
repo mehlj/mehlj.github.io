@@ -8,7 +8,7 @@ category: infrastructure
 As explained in [another post](https://mehlj.github.io/Docker/), Docker is software designed to 'containerize' applications. While it can be complex to implement
 on a larger scale, it is quite easy to quickly launch and test on a single machine.
 
-## Environment
+# Environment
 Containers are platform-independent - a major boost to portability in containerized applications. 
 
 However, to exactly replicate these steps, here are the specifications: 
@@ -17,7 +17,7 @@ However, to exactly replicate these steps, here are the specifications:
 
 These steps will largely be adapted from the [official CentOS/Docker documentation](https://docs.docker.com/install/linux/docker-ce/centos/).
 
-## Prerequisites
+# Prerequisites
 Begin by installing some utilities needed to setup our `docker` `yum` repository, and
 some drivers needed by the `docker` engine.
 ```
@@ -141,7 +141,7 @@ Start the `docker` service:
 Redirecting to /bin/systemctl start docker.service
 ```
 
-## Testing
+# Testing
 Now that `docker` is installed, we can use a proof-of-concept image from Docker Hub known as `hello-world` to verify
 our installation. Docker Hub is a public collection of pre-made image shared by the community. This `hello-world`
 container is provided by the company Docker itself.

@@ -18,7 +18,7 @@ Think of the `Dockerfile` as instructions for a construction worker. The worker 
 follows them step by step, and produces a final product in a package, ready to be used at the discretion of the 
 customer. This final product is the Docker image.
 
-## Example
+# Example
 ```Dockerfile
 FROM alpine:latest
 
@@ -41,7 +41,7 @@ VOLUME /data/hostvolume
 EXPOSE 80
 ```
 
-### FROM
+## FROM
 ```Dockerfile
 FROM alpine:latest
 ```
@@ -55,7 +55,7 @@ Docker images can be layered upon different images. This feature is useful for e
 
 Even better, you could simply use the official `apache` image.
 
-### RUN
+## RUN
 ```Dockerfile
 RUN apk update && \
     apk add vim
@@ -66,7 +66,7 @@ you should use if you want tasks to be performed at the OS level, but want outpu
 In this instance, Docker is instructed to update `alpine` using `apk`, install the `vim` package, and 
 create a new system user named `test_user`. 
 
-### COPY
+## COPY
 ```Dockerfile
 COPY testfile testfile
 ```
@@ -81,7 +81,7 @@ In this scenario, a simple text file was generated from the Docker host:
 
 The file `testfile` is copied from the host operating system to a file with the same name on the Docker container.
 
-### VOLUME
+## VOLUME
 ```Dockerfile
 RUN mkdir -p /data/hostvolume
 RUN echo "Persistent data!" > /data/hostvolume/data_from_container
@@ -98,7 +98,7 @@ In this instance, the `/data/hostvolume/` directory is created on the container,
 and then shared to the host operating system. The file `data_from_container` will not be lost when the container
 is inevitably destroyed. 
 
-### EXPOSE
+## EXPOSE
 ```Dockerfile
 EXPOSE 80
 ```
@@ -108,7 +108,7 @@ when utilizing Docker containers for network services.
 
 In this scenario, the container is configured to listen on port 80.
 
-## Building
+# Building
 Docker images are built from a `Dockerfile`. They are built using the `docker build` command:
 ```
 $ docker build -t <my_tag_name> <directory containing Dockerfile>  
@@ -176,7 +176,7 @@ REPOSITORY          TAG                 IMAGE ID            CREATED             
 my_alpine_image     latest              a5389d833441        7 minutes ago       35.9MB
 ```
 
-## Running
+# Running
 A Docker container is a running instance of a Docker image. To run an image, we can use `docker run`:
 ```
 [mehlj@docker dockerfile]$ docker run -it my_alpine_image /bin/sh   
