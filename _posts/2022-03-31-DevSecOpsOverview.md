@@ -6,16 +6,14 @@ category: infrastructure
 ---
 
 # Issue
+Software engineering within today's technological climate is fraught with challenges.
 
-Software engineering within today's technological climate is fraught with challenges. 
 ## Velocity
-
 To stay competitive in today's market, features must be released to customers rapidly. 
 
 Not only that, but these features must have direct fiscal gain for the company. Features that cause fiscal loss for the company must be tracked and rescinded accordingly.
 
 ## Software Vulnerabilities
-
 With organizations releasing software as quickly as possible, it is only natural that software bugs will emerge.
 
 Even small, seemingly benign bugs can be chained together and result in a serious software vulnerability. 
@@ -23,7 +21,6 @@ Even small, seemingly benign bugs can be chained together and result in a seriou
 Such vulnerabilities could result in significant fiscal loss for the organization, in the form of customer data compromise (reparations), fines, and intangible reputation damage. 
 
 ## Bolt-on Security
-
 As a response to increased deployment of bugs to production, companies often opt to implement more security controls in production. Implementations like perimeter firewalls, IDS/IPS, host-based AV, etc.
 
 While these are effective controls, they cannot be relied upon fully to prevent cybersecurity incidents.
@@ -34,7 +31,6 @@ The end result is attackers leveraging a bug in the companies' application itsel
 
 
 ## Rigid Infrastructure
-
 Companies not only need to be able to deliver features quickly, but they must be able to deliver these features reliably and with very limited downtime for customers.
 
 With high-visibility features being released, production environments must be able to adapt to rapid fluctuations of traffic. 
@@ -49,7 +45,6 @@ The nature of said infrastructure is in the interest of cybersecurity teams, as 
 
 
 ## Team Boundaries
-
 Issues like rigid infrastructure lead to resentment among team members. Development teams may work extremely hard on a feature release, and rigid infrastructure maintained by the operations team causes the release to be a flop. Or, vice versa.
 
 Resentment leads to strong dividing lines between operation and development teams. A culture of separation, and not of cooperation.
@@ -63,12 +58,10 @@ The operations team, without much context to the situation, has to deploy that f
 This ultimately leads to long and painful deployments during maintenance periods, which causes more animosity, stress, burnout, and financial loss for the organization. 
 
 ## Competition
-
 On top of all of those challenges, teams must be aware of their competitors. Competitors may already have adapted to the current landscape, and could be leaving your organization in the dust.
 
 
 ## Summary
-
 To sum it all up, organizations are moving too quickly for software to be released frequently, securely, and in a scalable manner.
 
 There needs to be a methodology that allows organizations to implement the frequent-release tenants of DevOps without sacrificing confidentiality, integrity, and reliability.
@@ -76,15 +69,12 @@ There needs to be a methodology that allows organizations to implement the frequ
 
 
 # Solution
-
 In order to not sacrifice security while meeting DevOps fundamentals, security controls need to be introduced at every stage of the software's lifecycle - which is the essence of DevSecOps.
 
 ## Velocity
-
 Organizations may or may not be releasing rapidly already, but DevSecOps compiles with the standard DevOps practice of frequent and small releases. 
 
 ## Software Vulnerabilities
-
 DevSecOps should not slow you down, if implemented correctly. DevSecOps is all about introducing security control implementation and testing early, so if vulnerabilities are discovered, they are typically found early on. 
 
 Organizations can respond to vulnerabilities during build and test phases, instead of in staging or production. Before the vulnerability becomes costly to the organization.
@@ -96,7 +86,6 @@ If the development team discovered it during static code analysis (SCA) scanning
 If the organization discovered the vulnerability late into the release stages, like in staging or production, significant time would be lost, as the release would have to backtrack the process and end up back at dev → test → staging again.
 
 ## Bolt-on Security
-
 Take our previous example. The organization may determine it's too costly (time or otherwise) to backtrack and fix the vulnerability now, so they push the release to production anyways. They implement a bolt-on security control, like an IPS signature for that particular exploit. 
 
 However, the offensive security landscape is rapidly evolving. They have found a method of masquerading their traffic to avoid common signature detection, and have exploited the production software, compromised customer data, and cost the company dearly.
@@ -106,7 +95,6 @@ DevSecOps promotes Defense-in-Depth (DiD), and implores organizations to impleme
 Both methods are helpful for avoiding security incidents, but it is best practice to combine them - hence defense in depth.
 
 ## Rigid Infrastructure
-
 DevSecOps promotes transient and immutable infrastructure, as stagnant and long-lived infrastructure not only is unable to adapt to the rapid development climate, but can lead to security incidents. 
 
 The longer infrastructure exists on the network, the longer it has a valid attack surface. Infrastructure should be provisioned as needed, and promptly destroyed when the engineering effort is complete.
@@ -126,7 +114,6 @@ Another method of combating, and likely eliminating, drift is implementing immut
 Immutable infrastructure allows for 100% accurate reporting from cybersecurity teams, as the risk landscape can be assessed via the code that comprises the images. They can be sure that the code matches what is deployed in production, since the infrastructure is immutable.
 
 ## Team Boundaries
-
 Introducing all teams (development, security, and operations) early in the software development lifecycle is imperative to preventing resentment and promoting inter-team cooperation.
 
 Constant cooperation is key, as no-one wants to be forced to work with a seemingly outside entity that is brought in at the last minute. Teams need to be aware of responsibilities, intent, and plan accordingly as early as possible. 
@@ -134,5 +121,4 @@ Constant cooperation is key, as no-one wants to be forced to work with a seeming
 Implementing security controls early also improves cooperation with cybersecurity teams, as less incidents occur, and devs become more used to working with quality control gates that relate to security.
 
 ## Competition
-
 If an organization is implementing DevSecOps, and are releasing software frequently and securely, they have already made significant strides to stay competitive in the current market. 
