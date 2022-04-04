@@ -1,6 +1,6 @@
 ---
 layout: post
-title: DevSecOps Overview
+title: DevSecOps - Overview
 published: true
 category: infrastructure
 ---
