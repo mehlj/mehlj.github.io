@@ -4,6 +4,16 @@ title: Project - On-Premises Kubernetes - Overview
 published: true
 category: infrastructure
 ---
+# Links
+https://github.com/users/mehlj/projects/2
+
+https://github.com/mehlj/mehlj-packer
+
+https://github.com/mehlj/mehlj-terraform
+
+https://github.com/mehlj/mehlj-ansible
+
+https://github.com/mehlj/mehlj-pipeline
 
 # Background
 Kubernetes seems to have won the container orchestration competition, and [even Mirantis agrees](https://www.mirantis.com/blog/mirantis-acquires-docker-enterprise-platform-business/). 
