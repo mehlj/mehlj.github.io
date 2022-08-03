@@ -5,7 +5,7 @@ published: true
 category: infrastructure
 ---
 # Links
-[Project Overview](https://github.com/users/mehlj/projects/2)
+[Task tracking](https://github.com/users/mehlj/projects/2)
 
 [Source code - Packer](https://github.com/mehlj/mehlj-packer)
 
