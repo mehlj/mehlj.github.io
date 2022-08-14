@@ -196,8 +196,15 @@ Since we want to keep this workflow entirely automated, and for [all the other b
 
 [Terraform](https://www.terraform.io/) is the most popular IaC tools in the market today, and complements nicely with Packer since they are both made by Hashicorp.
 
-It lets you define
+It allows you to define your infrastructure as idempotent, human-readable, declarative code. You simple write your own code in HCL, and the Terraform binary handles provisioning and state-management of the infrastructure.
 
+As mentioned previously, for this project, I need x3 virtual machines provisioned/managed in my on-prem vSphere cluster. Through the use of Packer, I have a vSphere template available for use.
+
+We can leverage Terraform to instantiate the template three times, with slightly differing specifications for each instantiation (hostname, IP, etc.). 
+
+```H
+
+```
 
 
 
