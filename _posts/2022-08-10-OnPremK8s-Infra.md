@@ -203,59 +203,209 @@ As mentioned previously, for this project, I need x3 virtual machines provisione
 We can leverage Terraform to instantiate the template three times, with slightly differing specifications for each instantiation (hostname, IP, etc.). 
 
 ```H
+module "k8snode0" {
+  source = "./modules/cluster_node/"
+  
+  vm_name            = "k8snode0"
+  vm_domain          = "lab.io"
+  vm_template        = "CentOS8_Template"
+  vm_datastore       = "datastore1"
+  vm_folder          = "/"
+  vm_num_cpus        = 2
+  vm_num_memory      = 4096
+  vm_ip              = "192.168.1.210"
+}
 
+module "k8snode1" {
+  source = "./modules/cluster_node/"
+  
+  vm_name            = "k8snode1"
+  vm_domain          = "lab.io"
+  vm_template        = "CentOS8_Template"
+  vm_datastore       = "datastore1"
+  vm_folder          = "/"
+  vm_num_cpus        = 2
+  vm_num_memory      = 4096
+  vm_ip              = "192.168.1.211"
+}
+
+module "k8snode2" {
+  source = "./modules/cluster_node/"
+  
+  vm_name            = "k8snode2"
+  vm_domain          = "lab.io"
+  vm_template        = "CentOS8_Template"
+  vm_datastore       = "datastore1"
+  vm_folder          = "/"
+  vm_num_cpus        = 2
+  vm_num_memory      = 4096
+  vm_ip              = "192.168.1.212"
+
+  # optional variables
+  bootstrap_cluster  = true
+}
+```
+
+To cut down on overall code, and to use [DRY techniques](https://terragrunt.gruntwork.io/docs/features/keep-your-terraform-code-dry/), we use [modules](https://www.terraform.io/language/modules/develop).
+
+All reusable code is placed in the module `cluster_node`, and we pass variables to it, much like a function.
+
+```H
+<snip>
+resource "vsphere_virtual_machine" "cluster_node" {
+  name             = var.vm_name
+  resource_pool_id = data.vsphere_compute_cluster.cluster.resource_pool_id
+  datastore_id     = data.vsphere_datastore.datastore.id
+  folder           = var.vm_folder
+
+  num_cpus               = var.vm_num_cpus
+  memory                 = var.vm_num_memory
+  cpu_hot_add_enabled    = true
+  cpu_hot_remove_enabled = true
+  memory_hot_add_enabled = true
+  guest_id               = data.vsphere_virtual_machine.template.guest_id
+
+  scsi_type = data.vsphere_virtual_machine.template.scsi_type
+
+  network_interface {
+    network_id   = data.vsphere_network.mgmt_lan.id
+    adapter_type = data.vsphere_virtual_machine.template.network_interface_types[0]
+    use_static_mac = var.vm_static_mac
+    mac_address    = var.vm_mac_address
+  }
+<snip>
+```
+
+### Pipeline
+In order for Terraform to deploy the infrastructure based on the code you write, you must call the binary CLI like so: `terraform apply`
+
+We can also leverage several Terraform CLI commands to perform other best practices, like initialization, planning, and formatting.
+
+In order to maintain the automated nature of this overall workflow, we can place all of these commands and more into a GitHub actions pipeline (since the code is stored in GitHub).
+
+The Actions runner will perform these commands automatically when the repository is pushed to.
+
+Note: for production usage, manual checking of Terraform code before applying is recommended. For this lab use case, I apply the code without review.
+
+```
+<snip>
+  # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+- name: Terraform Init
+  run: terraform init
+
+  # Checks that all Terraform configuration files adhere to a canonical format
+- name: Terraform Format
+  run: terraform fmt -check
+
+  # Generates an execution plan for Terraform
+- name: Terraform Plan
+  run: terraform plan
+
+  # On push to master, build or change infrastructure according to Terraform configuration files
+  # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
+- name: Terraform Apply
+  if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+  run: terraform apply -auto-approve
+<snip>
 ```
 
 
 
+## Kubespray
 
+When our Terraform pipeline executes, we have three instances of our CentOS template deployed into our vSphere cluster.
+
+Our end goal, however, is to provision a container orchestration system into this infrastructure.
+
+We can leverage [kubespray](https://github.com/kubernetes-sigs/kubespray) to bootstrap a Kubernetes cluster on X amount of servers.
+
+Kubespray is a Kubernetes SIGs product that leverages Ansible to bootstrap a cluster entirely in an automated fashion.
+
+In my case, I [forked the official kubespray repository](https://github.com/mehlj/kubespray) and stored my deployment-unique variables/files in my forked repo.
+
+My variables specified several things, including the IPs of the control plane and worker nodes, network plugin, runtime engine, etc.
 
 
 ### Pipeline
 
-## Kubespray
+Once all of your variables are specified, we can bootstrap the cluster using a simple `ansible-playbook` command.
 
+However, we want a little more done than just bootstrapping the cluster. Specifically, I need:
+* SELinux enabled (kubespray unfortunately disables it on all nodes)
+* kubectl configured for non-admin users
+* A couple of applications deployed into the cluster
 
+A simple wrapper script for kubespray can help chain these tasks together:
+```bash
+#!/bin/bash
 
+# NOTE - the ansible vault password file must contain the correct password to decrypt the Traefik private key file
 
+# example usage:
+# ./bootstrap.sh -n mehlj-cluster -f ~/.vault_pass.txt
 
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        -n|--kubespray-cluster-name) kubespray_cluster_name="$2"; shift ;;
+        -f|--vault-password-file) vault_password_file="$2"; shift ;;
+        *) echo "Unknown parameter passed: $1"; exit 1 ;;
+    esac
+    shift
+done
 
+# Bootstrap cluster with kubespray
+ansible-playbook -i kubespray/inventory/$kubespray_cluster_name/hosts.yaml kubespray/cluster.yml -b --private-key /home/runner/.ssh/github_actions
 
+# Enable SELinux
+ansible all -i kubespray/inventory/$kubespray_cluster_name/hosts.yaml -m selinux -a "policy=targeted state=enforcing" -b --private-key /home/runner/.ssh/github_actions
 
-# Strategy
-## Tools
-### vSphere
-I will be leveraging my existing vSphere cluster in my home lab, licensed with vSphere Enterprise and vCenter through [VMUG Advantage](https://www.vmug.com/).
+# Change kubelet.env SELinux context to resolve inital issue
+ansible all -i kubespray/inventory/$kubespray_cluster_name/hosts.yaml -m shell -a "semanage fcontext -a -t etc_t -f f /etc/kubernetes/kubelet.env; restorecon /etc/kubernetes/kubelet.env" -b --private-key /home/runner/.ssh/github_actions
 
-### Infrastructure as Code
-`terraform` will be used for all infrastructure provisioning - in this case, three Kubernetes cluster nodes.
+# Reboot all nodes and wait for them to come back up
+ansible all -i kubespray/inventory/$kubespray_cluster_name/hosts.yaml -m reboot -b --private-key /home/runner/.ssh/github_actions
 
-### Templating
-The vSphere provider for `terraform` generally requires a vSphere template to clone from, so `packer` will be used to provision and apply configuration management to a CentOS template.
+# Allow non-credentialed use of kubectl (only on control plane hosts)
+ansible kube_control_plane -i kubespray/inventory/$kubespray_cluster_name/hosts.yaml -m file -a "path=/home/mehlj/.kube/ owner=mehlj group=mehlj state=directory" -b --private-key /home/runner/.ssh/github_actions
+ansible kube_control_plane -i kubespray/inventory/$kubespray_cluster_name/hosts.yaml -m copy -a "src=/etc/kubernetes/admin.conf dest=/home/mehlj/.kube/config owner=mehlj group=mehlj remote_src=yes mode=0600" -b --private-key /home/runner/.ssh/github_actions
 
-### Configuration
-`ansible` will be used for all configuration management. CM code should be applied to baseline images only, to promote the principles of immutable infrastructure.
+# Deploy traefik and example hello-world applications
+ansible-playbook ansible/playbooks/traefik.yml -i kubespray/inventory/$kubespray_cluster_name/hosts.yaml --limit node1 -b --vault-password-file $vault_password_file --private-key /home/runner/.ssh/github_actions
+```
 
-### Kubernetes
-[`kubespray`](https://github.com/kubernetes-sigs/kubespray) will be used for Kubernetes cluster bootstrapping. It is better to leverage tried and true methodologies for complex tasks such as this.
+Now, the shell script can be executed with some arguments, and all those tasks will be completed without human intervention. 
 
-### REST API
-The REST API will be written in `go`, with the appropriate `Dockerfile` to facilitate `docker` image creation.
+But how do we execute it within the perspective of the automated workflow?
 
-### Version Control
-All code or configuration files will be stored in GitHub repositories. These repositories should be made public, as there will be no secrets stored in the code itself.
+There are a few ways to tackle this, but to experiment with Terraform provisioners, I chose to let Terraform handle execution of this script.
 
-### CI/CD
-Since all code will be stored in GitHub - I will leverage GitHub Actions for all CI pipelines.
+```H
+locals {
+  provisioner_command = "sleep 60; ./bootstrap.sh -n mehlj-cluster -f /tmp/.vault_pass.txt"
+}
+```
 
-## Separation
-Generally, I will try to promote logical separation of three major tenants in tech environments:
-1. Infrastructure
-2. Configuration
-3. Applications
+Only problem is, we don't want this to run on EVERY instantiation of the Terraform module. The cluster bootstrapping and post-tasks need only happen once.
 
-As such, I will keep these elements independent of each other, while still employing CI pipelines to bridge those gaps and automate deployment start to finish.
+To combat that issue, we can introduce some logic to only execute the shell script when a parent module-supplied variable `var.boostrap_cluster` is set to `True`.
+```H
+# -----Psuedocode:-----
+# if var.bootstrap_cluster = true:
+#   Provision the Kubernetes cluster using the bootstrap.sh script
+# else:
+#   skip the cluster bootstrapping, and only run a benign echo command to keep Terraform happy
+# -----end Psuedocode-----
+# 
+# 
+# This logic allows the cluster to be provisioned only once, to speed up the pipeline execution.
+# The cluster bootstrapping is entirely idempodent, but kubespray takes some time to complete. 
+# The cluster bootstrapping only needs to be run once, so omitting the step when it is not necessary allows the pipeline to be run faster.
+provisioner "local-exec" {
+  command = join(" && ", ["echo Bootstrapping cluster..", var.bootstrap_cluster != false ? local.provisioner_command : "echo Not bootstrapping cluster.."])
+}
+```
 
+To that end, we can set that variable to `True` on only one instanatiate of the module (in my case, `k8snode2`).
 
-# Overview
-![](/images/clusterflow.png)
+# Outcome
+After our GitHub Actions workflow executes, we are left with x3 CentOS VMs in our vSphere cluster, a working Kubernetes cluster on those VMs, and some post-configuration performed all automatically.
