@@ -27,6 +27,7 @@ All code is source controlled in GitHub repositories. No secrets are committed.
 Github Actions handles golang testing/building, and deployment of AWS infrastructure.
 
 ## Frontend
+Code repository: https://github.com/mehlj/resume-frontend
 ### App
 The resume site is written in HTML and styled in CSS.
 
@@ -98,6 +99,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
 With all this in place, our frontend is complete. We still, however, need our backend to implement an atomic counter (visitor count).
 
 ## Backend
+Code repository: https://github.com/mehlj/resume-backend
 ### App
 The backend consists of:
 * an HTTP API layer to communicate with a database
