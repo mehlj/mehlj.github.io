@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Project - On-Premises Kubernetes - Infrastructure
+title: Project - On-Premises Kubernetes - Implementation
 published: true
 category: infrastructure
 ---
@@ -11,6 +11,8 @@ category: infrastructure
 
 [Source code - Ansible](https://github.com/mehlj/mehlj-ansible)
 
+[Source code - Application](https://github.com/mehlj/mehlj-pipeline)
+
 
 # Background
 In this project, I will be deploying several clustered instances of a simple REST API written in Golang. To accomplish this, I will containerize the application and deploy it into an on-prem Kubernetes cluster.
@@ -20,7 +22,7 @@ There are two major components of the underlying infrastructure for this applica
 Just as we are defining the application and application configuration as code, we will define these two major infrastructure components entirely as code, and leverage automation to provision them.
 
 # Goal
-An automated, secure, and code-defined pipeline(s) that, when run, provisions virtual machines and bootstraps a production-ready Kubernetes cluster.
+An automated, secure, and code-defined pipeline(s) that, when run, provisions virtual machines and bootstraps a working Kubernetes cluster populated with a Golang REST API.
 
 # Implementation
 ## Templating
@@ -368,9 +370,6 @@ ansible all -i kubespray/inventory/$kubespray_cluster_name/hosts.yaml -m reboot 
 # Allow non-credentialed use of kubectl (only on control plane hosts)
 ansible kube_control_plane -i kubespray/inventory/$kubespray_cluster_name/hosts.yaml -m file -a "path=/home/mehlj/.kube/ owner=mehlj group=mehlj state=directory" -b --private-key /home/runner/.ssh/github_actions
 ansible kube_control_plane -i kubespray/inventory/$kubespray_cluster_name/hosts.yaml -m copy -a "src=/etc/kubernetes/admin.conf dest=/home/mehlj/.kube/config owner=mehlj group=mehlj remote_src=yes mode=0600" -b --private-key /home/runner/.ssh/github_actions
-
-# Deploy traefik and example hello-world applications
-ansible-playbook ansible/playbooks/traefik.yml -i kubespray/inventory/$kubespray_cluster_name/hosts.yaml --limit node1 -b --vault-password-file $vault_password_file --private-key /home/runner/.ssh/github_actions
 ```
 
 Now, the shell script can be executed with some arguments, and all those tasks will be completed without human intervention. 
@@ -407,5 +406,144 @@ provisioner "local-exec" {
 
 To that end, we can set that variable to `True` on only one instanatiate of the module (in my case, `k8snode2`).
 
+## REST API Deployment
+At this point, we have a working, yet empty, Kubernetes cluster.
+
+Our next step is to deploy our simple REST API into the cluster to serve as a working proof-of-concept.
+
+We could add another job/stage to our GitHub actions workflow, but in order to keep the pipeline code lean, we should add a final step to our bootstrap script:
+
+``` bash
+<snip>
+# Deploy traefik and example hello-world applications
+ansible-playbook ansible/playbooks/traefik.yml -i kubespray/inventory/$kubespray_cluster_name/hosts.yaml --limit node1 -b --vault-password-file $vault_password_file --private-key /home/runner/.ssh/github_actions
+```
+
+This snippet invokes a custom Ansible role:
+```yaml
+---
+- name: Deploy traefik as NodePort and two example applications
+  hosts: all
+  become: yes
+  roles:
+    - ../roles/deploy-traefik
+```
+
+
+Which utilizes Helm to deploy Traefik and various manifests to deploy a hello-world application, as well as the Golang REST API.
+```yaml
+---
+# tasks file for deploy-traefik
+<snip>
+- name: Deploy traefik
+  shell: /usr/local/bin/helm install traefik --set service.type=NodePort --set ports.web.nodePort=30001 --set ports.websecure.nodePort=30002 --set ports.websecure.tls.enabled=true --set deployment.replicas=3 traefik/traefik
+  args:
+    chdir: /tmp/
+
+- name: Merge YAML
+  template:
+    src: "{{ item }}"
+    dest: "/tmp/{{ item }}"
+  loop:
+    - tlsstore.yml
+    - app-deployment.yml
+    - deployment2.yml
+    - app-svc.yml
+    - svc2.yml
+    - app-ingress.yml
+    - hello2-ingress.yml
+    - nfs-pv.yml
+    - nfs-pvc.yml
+
+- name: Apply YAML
+  shell: /usr/local/bin/kubectl apply -f "{{ item }}"
+  loop:
+    - /tmp/tlsstore.yml
+    - /tmp/app-deployment.yml
+    - /tmp/deployment2.yml
+    - /tmp/app-svc.yml
+    - /tmp/svc2.yml
+    - /tmp/app-ingress.yml
+    - /tmp/hello2-ingress.yml
+    - /tmp/nfs-pv.yml
+    - /tmp/nfs-pvc.yml
+    
+- name: Wait for http://app.lab.io to respond externally via ingress
+  uri:
+    url: "http://app.lab.io:30001"
+    method: GET
+    follow_redirects: none
+  register: _result
+  until: _result.status == 200
+  retries: 30
+  delay: 5
+
+- name: Wait for https://hello2.lab.io to respond externally via ingress
+  uri:
+    url: "https://hello2.lab.io:30002"
+    method: GET
+    follow_redirects: none
+    validate_certs: no
+  register: _result
+  until: _result.status == 200
+  retries: 30
+  delay: 5
+```
+
+The last two tasks in the Ansible role ensure that both applications return `200`, so once the Ansible role finishes execution, we can be assured that our application stack is deployed and functioning.
+
+## REST API Updates
+When we make changes to the REST API later down the road, we don't necessarily want the entire cluster to be destroyed and re-provisioned on every merge to `main`.
+
+Instead, we want a rolling update to our existing cluster. That way, we can see value delivered as quickly as possible.
+
+To account for this use-case, we can engineer a separate GitHub actions workflow, attached to our REST API GitHub repository, that builds, tests, and deploys our container image to the existing cluster.
+
+```yaml
+<snip>
+jobs:
+
+  build:
+    runs-on: mehlj-lab-runners
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Build Docker image
+      run: docker build -t docker.io/mehlj/mehlj-pipeline:latest .
+
+  test:
+    runs-on: mehlj-lab-runners
+    needs: build
+    steps:
+    - name: Grab go dependencies
+      run: go get -u github.com/gorilla/mux github.com/mattn/go-sqlite3
+    
+    - name: Run unit tests
+      run: go test -v api/main_test.go api/main.go api/sql.go
+    
+    - name: Lint Dockerfile
+      run: hadolint Dockerfile
+      
+  deploy:
+    runs-on: mehlj-lab-runners
+    needs: [build, test]
+    steps:
+    - name: Push Docker image
+      run: docker image push docker.io/mehlj/mehlj-pipeline:latest
+      
+    - name: Deploy to kubernetes
+      run: ssh -o StrictHostKeyChecking=no root@k8snode0 kubectl rollout restart deployment mehlj-pipeline-deploy
+```
+
+This workflow builds our container image using the repository `Dockerfile`, performs unit testing and linting, pushes the image to Docker Hub, and performs a rolling update via the command `kubectl rollout restart deployment mehlj-pipeline-deploy`.
+
+This command, within the `Deployment` resource, replaces instances of the old container image with instances of the new image, while ensuring that the application is never left without X number of healthy container instances.
+
+In this manner, the application can receive live updates without users being affected by any sort of downtime.
+
 # Outcome
-After our GitHub Actions workflow executes, we are left with x3 CentOS VMs in our vSphere cluster, a working Kubernetes cluster on those VMs, and some post-configuration performed all automatically.
+After our GitHub Actions workflow executes, we are left with x3 CentOS VMs in our vSphere cluster, a working Kubernetes cluster on those VMs, and some automatic post-configuration applied.
+
+The next phase of our workflow deploys a containerized reverse proxy and our simple golang REST API into the cluster.
+
+[Another GitHub Actions workflow](https://github.com/mehlj/mehlj-pipeline) is present, to account for later changes to the REST API. The workflow builds, tests, and performs a rolling deployment update inside the Kubernetes cluster.
